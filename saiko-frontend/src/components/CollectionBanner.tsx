@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 const dummy = (text: string, w: number = 600, h: number = 800) =>
   `https://placehold.co/${w}x${h}/0a0a0a/d4a853?text=${encodeURIComponent(text)}`;
@@ -21,12 +22,7 @@ export default function CollectionBanner({ image, title, products }: CollectionB
   return (
     <section className="mb-16">
       <div className="relative h-64 md:h-80 mb-8 overflow-hidden">
-        <Image
-          src={image}
-          alt={title}
-          fill
-          className="object-cover"
-        />
+        <Image src={image} alt={title} fill className="object-cover" />
         <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
           <h2 className="text-3xl md:text-4xl font-light tracking-widest uppercase gold-text-gradient">
             {title}
@@ -35,7 +31,7 @@ export default function CollectionBanner({ image, title, products }: CollectionB
       </div>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {products.map((product) => (
-          <a key={product.id} href={`/products/${product.slug}`} className="group block">
+          <Link key={product.id} href={`/products/${product.slug}`} className="group block">
             <div className="relative overflow-hidden bg-black-light aspect-[3/4] mb-3">
               <Image
                 src={product.images[0] || dummy(product.title)}
@@ -62,7 +58,7 @@ export default function CollectionBanner({ image, title, products }: CollectionB
                 <span className="text-gold text-xs font-semibold">₹ {product.price}</span>
               )}
             </div>
-          </a>
+          </Link>
         ))}
       </div>
     </section>

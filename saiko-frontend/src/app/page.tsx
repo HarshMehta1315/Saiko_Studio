@@ -1,140 +1,411 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import CollectionBanner from "@/components/CollectionBanner";
-import ProductCard from "@/components/ProductCard";
+import { corsetProducts, coordProducts, dressProducts, topProducts, celebrityProducts } from "@/lib/products";
 
 const img = (name: string) => `/images/${name}`;
 
-const corsetProducts = [
-  { id: "1", title: "Emerald Corset Belt", price: "1,500", compareAtPrice: "2,750", images: [img("EmeraldCORSETBELT.jpg.jpeg"), img("EmeraldCorsetbeltback.jpg.jpeg")], slug: "emerald-corset-belt", onSale: true },
-  { id: "2", title: "GABBY Pink Corset", price: "5,550", images: [img("3aad94ac-bfc6-4ca1-a613-be095caad508.jpg.jpeg")], slug: "gabby-pink-corset" },
-  { id: "3", title: "Psych Underwire bralette top", price: "5,000", images: [img("Untitled-8_2.png")], slug: "psych-underwire-bralette-top" },
-  { id: "4", title: "Baby J corset", price: "5,750", images: [img("Untitled-2_53.jpg.jpeg")], slug: "baby-j-corset" },
-  { id: "5", title: "Violet mesh corset top", price: "6,000", images: [img("Untitled-2_52_copy_2.jpg.jpeg")], slug: "violet-mesh-corset-top" },
-  { id: "6", title: "PINK CORSET TOP BACK TIE", price: "4,500", images: [img("pinkoffshoulder1.jpg.jpeg")], slug: "pink-corset-top-back-tie" },
-  { id: "7", title: "CORSET BELT", price: "1,500", compareAtPrice: "2,750", images: [img("corsetbelt1.jpg.jpeg")], slug: "corset-belt", onSale: true },
-  { id: "8", title: "NEWSPAPER SCRIBBLE CORSET", price: "5,250", images: [img("C6935C1F-E469-4571-AF28-950E6BEBD3B6.jpg.jpeg")], slug: "newspaper-scribble-corset" },
-  { id: "9", title: "KISS AND TELL HANDKERCHIEF CORSET TOP", price: "5,000", images: [img("C5579E87-810A-4C2E-AEF1-6E3DE6BD84CF.jpg.jpeg")], slug: "kiss-and-tell-handkerchief-corset-top" },
-  { id: "10", title: "ALL EYES ON YOU VELVET CORSET", price: "5,250", images: [img("printcorset.jpg.jpeg")], slug: "all-eyes-on-you-velvet-corset" },
-  { id: "11", title: "SUNSET BLOCK CORSET", price: "4,750", images: [img("IMG_2280_bf8fc5f2-0434-4e2b-8e8d-3f12da1bd9d0.jpg.jpeg")], slug: "sunset-block-corset" },
-  { id: "12", title: "MOTION THROUGH COLOUR BLOCKED CORSET", price: "5,250", images: [img("e23f1f_16e9551cfb9149ccae571d12298af0ba_mv2.jpg.jpeg")], slug: "motion-through-colour-blocked-corset" },
-];
+function useScrollReveal() {
+  const ref = useRef<HTMLDivElement>(null);
+  const [revealed, setRevealed] = useState(false);
 
-const coordProducts = [
-  { id: "13", title: "COLOUR ME WITH EVERYTHING COORD", price: "4,000", compareAtPrice: "5,500", images: [img("IMG_4346-min.webp.jpeg")], slug: "colour-me-with-everything-coord", onSale: true },
-  { id: "14", title: "Freddy coord set", price: "8,250", images: [img("new.jpg.jpeg"), img("NEW3.jpg.jpeg")], slug: "freddy-coord-set" },
-  { id: "15", title: "knit Baby J coord set", price: "3,000", compareAtPrice: "3,150", images: [img("Untitled-2_14_55176c6b-e0f8-4322-998b-c036d230c584.jpg.jpeg"), img("Untitled-2_12_72bfd0ab-9b0c-4dcc-85b0-aa5858764cd5.jpg.jpeg")], slug: "knit-baby-j-coord-set", onSale: true },
-  { id: "16", title: "Baby J denim coord set", price: "9,750", images: [img("coordset.jpg.jpeg")], slug: "baby-j-coord-set" },
-  { id: "17", title: "MIRCHI COORD SET", price: "4,250", images: [img("mirchi1.jpg.jpeg")], slug: "mirchi-coord-set" },
-  { id: "18", title: "CERULEAN PLAID COORD SET", price: "6,750", images: [img("Plaidcoordset7.jpg.jpeg")], slug: "plaid-coord-set" },
-  { id: "19", title: "ZUMMER BREEZE COORD SET", price: "4,000", images: [img("zummerbreeze4.jpg.jpeg")], slug: "zummer-breeze-coord-set" },
-  { id: "20", title: "MOTION THROUGH ORANGE AND RED COORD SET", price: "7,000", images: [img("IMG_0306-min.jpg.jpeg")], slug: "motion-through-orange-and-red-coord-set" },
-  { id: "21", title: "MOTION THROUGH COLOUR BLOCKED COORD SET", price: "9,000", images: [img("e23f1f_16e9551cfb9149ccae571d12298af0ba_mv2.webp.jpeg")], slug: "motion-through-colour-blocked-coord-set" },
-  { id: "22", title: "SUNSET BLOCK COORD SET", price: "7,250", images: [img("IMG_2280.jpg.jpeg")], slug: "sunset-block-coord-set" },
-  { id: "23", title: "TRIP OVER ME COORD SET BLUE", price: "7,750", images: [img("IMG_1573-min.jpg.jpeg")], slug: "trip-over-me-coord-set-blue" },
-  { id: "24", title: "COROLLA THREE PIECE COORD", price: "8,750", images: [img("F79B3249-9C4B-427C-A240-D770E302709F-min.jpg.jpeg")], slug: "corolla-three-piece-coord" },
-];
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setRevealed(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.15 }
+    );
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
 
-const dressProducts = [
-  { id: "25", title: "PINK FOLIO ONE SHOULDER RUFFLE DRESS", price: "5,250", images: [img("3BE77CE8-F42B-4FAA-B9D8-A16026E7AFB5-min.jpg.jpeg")], slug: "pink-folio-one-shoulder-ruffle-dress" },
-  { id: "26", title: "Celestial Long Dress", price: "8,400", images: [img("celestial.png"), img("celestial2.png")], slug: "celestial-long-dress" },
-  { id: "27", title: "Tiger cut out bodycon dress", price: "4,500", images: [img("Untitled-2_25.jpg.jpeg")], slug: "tiger-cut-out-bodycon-dress" },
-  { id: "28", title: "KISS AND TELL DRESS", price: "2,500", images: [img("dress1.jpg.jpeg")], slug: "kiss-and-tell-dress" },
-  { id: "29", title: "PINK SWIRL BARBIE DRESS", price: "4,000", images: [img("52CCDE87-C7A7-414F-BC44-3AA24BB555D8.jpg.jpeg")], slug: "pink-swirl-barbie-dress" },
-  { id: "30", title: "MOTION THROUGH MAGENTA PINK", price: "5,750", images: [img("60ffb270cfdbaf00011b9c80.webp.jpeg")], slug: "motion-through-magenta-pink" },
-  { id: "31", title: "MOTION THROUGH DIRTY PINK DRESS", price: "5,550", images: [img("62A377B4-D450-4DB2-A4A7-DDD35D95BEF7-min.jpg.jpeg")], slug: "motion-through-dirty-pink-dress" },
-  { id: "32", title: "MOTION THROUGH BROWN DRESS", price: "6,050", images: [img("D02336E6-6508-4322-8CA2-8DE42669A952.jpg.jpeg")], slug: "motion-through-brown-dress" },
-  { id: "33", title: "TRIP OVER MY DRESS", price: "5,250", images: [img("8BDF8DF7-369C-4669-B59A-A6A2A96DC761-min.jpg.jpeg")], slug: "trip-over-my-dres" },
-  { id: "34", title: "EXTRA RED HOT MINI DRESS", price: "4,250", images: [img("IMG_1589.jpg.jpeg")], slug: "extra-red-hot-mini-dress" },
-  { id: "35", title: "ALL OVER GREEN SWIRL RUFFLE DRESS", price: "5,250", images: [img("IMG_1612.jpg.jpeg")], slug: "all-over-green-swirl-ruffle-dress" },
-];
+  return { ref, revealed };
+}
 
-const topProducts = [
-  { id: "36", title: "Lost bodysuit", price: "2,000", compareAtPrice: "3,000", images: [img("Untitled-2_52_copy_3_1f5a72a3-9dfe-4d59-bbbf-134d30010951.jpg.jpeg")], slug: "lost-bodysuit", onSale: true },
-  { id: "37", title: "Monologo Neon cropped Top", price: "2,000", compareAtPrice: "2,750", images: [img("Untitled-2_43_b4a551be-92ad-4e17-84f0-146a884c4650.jpg.jpeg")], slug: "monologo-neon-cropped-top", onSale: true },
-  { id: "38", title: "Magenta cut out corset top", price: "4,500", images: [img("edit1_8b0789a0-1c6e-46b3-99e1-309537e6018f.jpg.jpeg")], slug: "magenta-cut-out-corset-top" },
-  { id: "39", title: "KISS AND TELL HANDKERCHIEF CORSET TOP", price: "5,000", images: [img("C5579E87-810A-4C2E-AEF1-6E3DE6BD84CF.jpg.jpeg")], slug: "kiss-and-tell-handkerchief-corset-top" },
-  { id: "40", title: "MONOLOGO ARABELLA TOP", price: "3,500", images: [img("D9165B09-87B4-4047-B438-D0BEB6DDA684.jpg.jpeg")], slug: "monologo-arabella-top" },
-  { id: "41", title: "LAVA RED HALTER TOP", price: "6,000", images: [img("9D0B9988-0E11-45A9-B4D4-C2EA02C6BE48.jpg.jpeg")], slug: "lava-red-halter-top" },
-  { id: "42", title: "COLOUR ME WITH EVERYTHING SHIRT", price: "2,250", images: [img("25B3C7AA-D028-4CBF-87C7-7A3A814ED183-min_a94b4e57-81e8-4f8f-bd50-8ee3290a3a16.jpg.jpeg")], slug: "colour-me-with-everything-shirt" },
-  { id: "43", title: "MOTION THROUGH EMRALD TOP", price: "2,500", images: [img("IMG_7670_76e9a5c5-9ec8-4c3c-addf-64e80a4e3cb4.jpg.jpeg")], slug: "motion-through-emrald-top" },
-  { id: "44", title: "PINK AND PURPLE UNIVERSE TOP", price: "2,500", images: [img("0F6B1CDB-A3FA-4E4E-A31B-95229E2A4C28-min_5f365e22-6454-49a8-bb91-dffd93207cc8.jpg.jpeg")], slug: "pink-and-purple-universe-top" },
-  { id: "45", title: "FALLEN FLORET TOP", price: "4,250", images: [img("5834CEA9-D3E6-4C6C-A6C5-D4459A8CC6C6-min_d9d36048-f98d-40c6-93a9-0c24578bb52a.jpg.jpeg")], slug: "fallen-floret-top" },
-  { id: "46", title: "ITS RAINING NEUTRONS TOP", price: "3,250", images: [img("D73A4B09-FE05-41E9-BE69-61531B99C4B9-min_3d094828-e27e-4e82-b945-6fc0a3ef5f3f.jpg.jpeg")], slug: "its-raining-neutrons-top" },
-  { id: "47", title: "COROLLA CAPE JACKET", price: "3,250", images: [img("F79B3249-9C4B-427C-A240-D770E302709F-min_ef0741eb-bd2f-42ff-8e43-1cd28a6ee549.jpg.jpeg")], slug: "corolla-cape-jacket" },
-];
+function Marquee({ text }: { text: string }) {
+  return (
+    <div className="marquee-container py-6 border-y border-gold/10">
+      <div className="marquee-content">
+        {[...Array(2)].map((_, i) => (
+          <span key={i} className="text-gold/20 text-sm md:text-base tracking-[0.3em] uppercase mx-8">
+            {text}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
 
-const celebrityProducts = [
-  { id: "48", title: "PINK FOLIO ONE SHOULDER RUFFLE DRESS", price: "5,250", images: [img("3BE77CE8-F42B-4FAA-B9D8-A16026E7AFB5-min.jpg.jpeg")], slug: "pink-folio-one-shoulder-ruffle-dress" },
-  { id: "49", title: "UMBER CORSET", price: "5,250", images: [img("IMG_2029.jpg.jpeg")], slug: "umber-corset" },
-  { id: "50", title: "SKITTLE BLUE CORSET", price: "5,500", images: [img("85B07E16-B592-459C-8875-A9431BFEC0C4-min.jpg.jpeg")], slug: "skittle-blue-corset" },
-  { id: "51", title: "MOTION THROUGH ORANGE AND RED COORD SET", price: "7,000", images: [img("IMG_0306-min.jpg.jpeg")], slug: "motion-through-orange-and-red-coord-set" },
-  { id: "52", title: "MOTION THROUGH COLOUR BLOCKED COORD SET", price: "9,000", images: [img("e23f1f_16e9551cfb9149ccae571d12298af0ba_mv2.webp.jpeg")], slug: "motion-through-colour-blocked-coord-set" },
-  { id: "53", title: "ELECTRIC GREEN CORSET WITH DRAPED DRAWSTRING SKIRT", price: "8,750", images: [img("8CAA258F-3AC0-4B5D-BBD6-92FEAE81E297-min.jpg.jpeg")], slug: "electric-green-corset-with-draped-drawstring-skirt" },
-  { id: "54", title: "BROWN TRIBAL VELVET CORSET", price: "5,400", images: [img("IMG_2468.jpg.jpeg")], slug: "brown-tribal-velvet-corset" },
-  { id: "55", title: "HOT PINK SWIRL HALTER CROPPED TOP", price: "5,250", images: [img("F01D9466-4C3D-4C7C-9E3A-99DE88200E55.jpg.jpeg")], slug: "hot-pink-swirl-halter-cropped-top" },
-  { id: "56", title: "KALEIDOSCOPIC GREEN TROUSER SUIT", price: "8,750", images: [img("IMG_1954.jpg.jpeg")], slug: "kaleidoscopic-green-trouser-suit" },
-];
+function AnimatedCounter({ target, suffix = "" }: { target: number; suffix?: string }) {
+  const [count, setCount] = useState(0);
+  const { ref, revealed } = useScrollReveal();
+
+  useEffect(() => {
+    if (!revealed) return;
+    let start = 0;
+    const step = target / 60;
+    const interval = setInterval(() => {
+      start += step;
+      if (start >= target) {
+        setCount(target);
+        clearInterval(interval);
+      } else {
+        setCount(Math.floor(start));
+      }
+    }, 16);
+    return () => clearInterval(interval);
+  }, [revealed, target]);
+
+  return (
+    <div ref={ref} className="text-center">
+      <div className="text-4xl md:text-5xl gold-text-gradient font-light">{count}{suffix}</div>
+    </div>
+  );
+}
 
 export default function Home() {
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [scrollY, setScrollY] = useState(0);
+  const [heroLoaded, setHeroLoaded] = useState(false);
+  const [hoveredProduct, setHoveredProduct] = useState<string | null>(null);
+
+  const heroReveal = useScrollReveal();
+  const aboutReveal = useScrollReveal();
+  const statsReveal = useScrollReveal();
+
+  const collections = [
+    { title: "Corsets", image: img("corset.jpg.jpeg"), products: corsetProducts, href: "/collections?cat=corsets" },
+    { title: "Coord Sets", image: img("co_ordsets.jpg.jpeg"), products: coordProducts, href: "/collections?cat=coord-sets" },
+    { title: "Dresses", image: img("dresses.jpg.jpeg"), products: dressProducts, href: "/collections?cat=dresses" },
+    { title: "Tops", image: img("tops.jpg.jpeg"), products: topProducts, href: "/collections?cat=tops" },
+    { title: "Celebrity Edit", image: img("celebrity_1.jpg.jpeg"), products: celebrityProducts, href: "/collections?cat=celebrity-edit" },
+  ];
+
+  useEffect(() => {
+    setHeroLoaded(true);
+    const handleMouseMove = (e: MouseEvent) => setMousePos({ x: e.clientX, y: e.clientY });
+    const handleScroll = () => setScrollY(window.scrollY);
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
-    <div>
-      <section className="relative h-[70vh] md:h-[90vh] overflow-hidden">
-        <Image
-          src={img("web_banner_f_1.png")}
-          alt="The Saiko Studio"
-          fill
-          className="object-cover"
-          priority
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/60" />
+    <div className="relative">
+      {/* Custom Cursor */}
+      <div
+        className="cursor-dot hidden lg:block"
+        style={{ transform: `translate(${mousePos.x - 4}px, ${mousePos.y - 4}px)` }}
+      />
+      <div
+        className="cursor-outline hidden lg:block"
+        style={{ transform: `translate(${mousePos.x - 20}px, ${mousePos.y - 20}px)` }}
+      />
+
+      {/* Grain Overlay */}
+      <div className="grain" />
+
+      {/* Hero Section */}
+      <section className="relative h-screen overflow-hidden">
+        {/* Dark Background */}
+        <div className="absolute inset-0 bg-black" />
+
+        {/* Animated Gold Grid Lines */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-0 left-1/4 w-[1px] h-full bg-gradient-to-b from-transparent via-gold/10 to-transparent" />
+          <div className="absolute top-0 left-1/2 w-[1px] h-full bg-gradient-to-b from-transparent via-gold/5 to-transparent" />
+          <div className="absolute top-0 left-3/4 w-[1px] h-full bg-gradient-to-b from-transparent via-gold/10 to-transparent" />
+          <div className="absolute top-1/4 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-gold/5 to-transparent" />
+          <div className="absolute top-1/2 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-gold/10 to-transparent" />
+          <div className="absolute top-3/4 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-gold/5 to-transparent" />
+        </div>
+
+        {/* Rotating Gold Ring */}
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center animate-fade-in">
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-light tracking-widest uppercase gold-text-gradient mb-4">
-            </h1>
-            <p className="text-gray-300 text-sm md:text-base tracking-wider max-w-xl mx-auto px-4">
+          <div
+            className="w-[500px] h-[500px] md:w-[700px] md:h-[700px] lg:w-[900px] lg:h-[900px] border border-gold/10 rounded-full"
+            style={{ animation: "spin 30s linear infinite" }}
+          />
+          <div
+            className="absolute w-[400px] h-[400px] md:w-[550px] md:h-[550px] lg:w-[700px] lg:h-[700px] border border-gold/5 rounded-full"
+            style={{ animation: "spin 20s linear infinite reverse" }}
+          />
+          <div
+            className="absolute w-[300px] h-[300px] md:w-[400px] md:h-[400px] lg:w-[500px] lg:h-[500px] border border-gold/15 rounded-full"
+            style={{ animation: "spin 15s linear infinite" }}
+          />
+        </div>
+
+        {/* Diamond Shapes */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div
+            className="w-[200px] h-[200px] md:w-[300px] md:h-[300px] border border-gold/5"
+            style={{ animation: "spin 25s linear infinite", transform: "rotate(45deg)" }}
+          />
+          <div
+            className="absolute w-[150px] h-[150px] md:w-[200px] md:h-[200px] border border-gold/10"
+            style={{ animation: "spin 18s linear infinite reverse", transform: "rotate(45deg)" }}
+          />
+        </div>
+
+        {/* Gold Particles */}
+        {heroLoaded && [...Array(20)].map((_, i) => (
+          <div
+            key={i}
+            className="gold-particle"
+            style={{
+              left: `${5 + Math.random() * 90}%`,
+              top: `${10 + Math.random() * 80}%`,
+              animationDelay: `${Math.random() * 3}s`,
+              animationDuration: `${2 + Math.random() * 4}s`,
+              width: `${2 + Math.random() * 4}px`,
+              height: `${2 + Math.random() * 4}px`,
+            }}
+          />
+        ))}
+
+        {/* Radial Glow */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="w-[600px] h-[600px] bg-gold/5 rounded-full blur-[150px]" />
+        </div>
+
+        {/* Content */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
+          <div
+            className={`transition-all duration-[2000ms] ${heroLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
+            style={{ transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)" }}
+          >
+            {/* Decorative Line Above */}
+            <div className="flex items-center gap-4 mb-8 justify-center">
+              <div className="w-12 h-[1px] bg-gold/40" />
+              <div className="w-2 h-2 bg-gold/60 rotate-45" />
+              <div className="w-12 h-[1px] bg-gold/40" />
+            </div>
+
+            <p className="text-gold/60 text-xs md:text-sm tracking-[0.8em] uppercase text-center mb-6">
+              Est. 2024 — Luxury Fashion House
             </p>
+
+            <h1
+              className="text-6xl md:text-8xl lg:text-[10rem] font-extralight tracking-[0.2em] gold-text-gradient text-center leading-none"
+              style={{ fontFamily: "Rajdhani, sans-serif" }}
+            >
+              SAIKO
+            </h1>
+            <h1
+              className="text-6xl md:text-8xl lg:text-[10rem] font-extralight tracking-[0.4em] text-white/90 text-center leading-none mt-2"
+              style={{ fontFamily: "Rajdhani, sans-serif" }}
+            >
+              STUDIO
+            </h1>
+
+            {/* Decorative Line Below */}
+            <div className="flex items-center gap-4 mt-8 justify-center">
+              <div className="w-12 h-[1px] bg-gold/40" />
+              <div className="w-2 h-2 bg-gold/60 rotate-45" />
+              <div className="w-12 h-[1px] bg-gold/40" />
+            </div>
+          </div>
+
+          <div
+            className={`transition-all duration-[1500ms] delay-700 ${heroLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
+          >
+            <p className="text-gray-400/80 text-sm md:text-base tracking-[0.3em] max-w-xl mx-auto text-center mb-12 font-light">
+              Where bold meets beautiful
+            </p>
+          </div>
+
+          <div
+            className={`transition-all duration-[1500ms] delay-[1000ms] ${heroLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
+          >
             <Link
               href="/collections"
-              // className="mt-8 inline-block gold-gradient text-black font-semibold tracking-widest uppercase text-sm px-8 py-3 hover:opacity-90 transition-opacity"
+              className="group relative inline-block px-16 py-5 overflow-hidden"
             >
-              {/* Explore Shop */}
+              <span className="absolute inset-0 border border-gold/30 transition-all duration-700 group-hover:border-gold group-hover:rotate-1" />
+              <span className="absolute inset-0 bg-gradient-to-r from-gold/0 via-gold/10 to-gold/0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 translate-x-[-100%] group-hover:translate-x-[100%]" style={{ transition: "all 0.7s ease" }} />
+              <span className="relative text-gold text-xs tracking-[0.4em] uppercase group-hover:text-white transition-colors duration-500 font-light">
+                Explore Collection
+              </span>
+              <span className="absolute bottom-0 left-0 h-[1px] bg-gold w-0 group-hover:w-full transition-all duration-1000" />
+              <span className="absolute top-0 right-0 w-[1px] bg-gold h-0 group-hover:h-full transition-all duration-1000 delay-100" />
             </Link>
+          </div>
+        </div>
+
+        {/* Scroll Indicator */}
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3">
+          <span className="text-gold/30 text-[10px] tracking-[0.5em] uppercase">Scroll to Discover</span>
+          <div className="w-[1px] h-16 bg-gradient-to-b from-gold/40 to-transparent relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-1/3 bg-gold animate-bounce" />
+          </div>
+        </div>
+
+        {/* Corner Accents */}
+        <div className="absolute top-8 left-8 w-16 h-16 border-l border-t border-gold/20" />
+        <div className="absolute top-8 right-8 w-16 h-16 border-r border-t border-gold/20" />
+        <div className="absolute bottom-8 left-8 w-16 h-16 border-l border-b border-gold/20" />
+        <div className="absolute bottom-8 right-8 w-16 h-16 border-r border-b border-gold/20" />
+      </section>
+
+      {/* Marquee */}
+      <Marquee text="✦ SALES ✦ CORSETS ✦ COORD SETS ✦ DRESSES ✦ TOPS ✦ CELEBRITY EDIT ✦ BOLD ✦ BEAUTIFUL ✦" />
+
+      {/* Featured Collections */}
+      <section className="py-24 md:py-32">
+        <div ref={heroReveal.ref} className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16 transition-all duration-1000 ${heroReveal.revealed ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"}`}>
+          <p className="text-gold/60 text-xs tracking-[0.5em] uppercase text-center mb-4">Discover</p>
+          <h2 className="text-3xl md:text-5xl lg:text-6xl font-light tracking-widest uppercase gold-text-gradient text-center">
+            Our Collections
+          </h2>
+          <div className={`line-draw mx-auto mt-6 max-w-[200px] ${heroReveal.revealed ? "revealed" : ""}`} />
+        </div>
+
+        {collections.map((col, idx) => {
+          const reveal = useScrollReveal();
+          const isEven = idx % 2 === 0;
+          const featuredProduct = col.products[0];
+
+          return (
+            <div
+              key={col.title}
+              ref={reveal.ref}
+              className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-24 md:mb-32 transition-all duration-1000 ${reveal.revealed ? "opacity-100 translate-y-0" : "opacity-0 translate-y-16"}`}
+            >
+              <div className={`grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center ${!isEven ? "lg:direction-rtl" : ""}`}>
+                {/* Image Side */}
+                <div className={`relative group ${!isEven ? "lg:order-2" : ""}`}>
+                  <div className="relative aspect-[4/5] overflow-hidden">
+                    <Image
+                      src={col.image}
+                      alt={col.title}
+                      fill
+                      className="object-cover transition-transform duration-[1.5s] group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                    <div className="absolute inset-0 border border-gold/0 group-hover:border-gold/30 transition-all duration-700 m-4" />
+                  </div>
+
+                  {/* Floating Tag */}
+                  <div className="absolute top-6 left-6 bg-black/80 backdrop-blur-sm px-4 py-2 border border-gold/30">
+                    <span className="text-gold text-xs tracking-[0.3em] uppercase">{col.products.length} Products</span>
+                  </div>
+                </div>
+
+                {/* Content Side */}
+                <div className={`py-8 lg:py-0 ${!isEven ? "lg:order-1 lg:text-right" : ""}`}>
+                  <p className="text-gold/40 text-xs tracking-[0.5em] uppercase mb-4">Collection {String(idx + 1).padStart(2, "0")}</p>
+                  <h3 className="text-3xl md:text-4xl lg:text-5xl font-light tracking-widest uppercase mb-6">
+                    {col.title}
+                  </h3>
+                  <p className="text-gray-400 text-sm leading-relaxed mb-8 max-w-md">
+                    Discover our curated selection of {col.title.toLowerCase()}, crafted for those who dare to stand out. Each piece tells a story of bold design and uncompromising quality.
+                  </p>
+
+                  {/* Featured Product Preview */}
+                  {featuredProduct && (
+                    <div
+                      className="mb-8 cursor-pointer"
+                      onMouseEnter={() => setHoveredProduct(featuredProduct.slug)}
+                      onMouseLeave={() => setHoveredProduct(null)}
+                    >
+                      <Link href={`/products/${featuredProduct.slug}`} className="block">
+                        <div className="relative aspect-[3/4] overflow-hidden mb-4 max-w-[200px]">
+                          <Image
+                            src={featuredProduct.images[0]}
+                            alt={featuredProduct.title}
+                            fill
+                            className={`object-cover transition-all duration-700 ${hoveredProduct === featuredProduct.slug ? "scale-110" : "scale-100"}`}
+                          />
+                          <div className="absolute inset-0 bg-black/0 hover:bg-black/20 transition-colors duration-500" />
+                        </div>
+                        <p className="text-white text-sm tracking-wide">{featuredProduct.title}</p>
+                        <p className="text-gold text-sm">₹ {featuredProduct.price}</p>
+                      </Link>
+                    </div>
+                  )}
+
+                  <Link
+                    href={col.href}
+                    className="group inline-flex items-center gap-3 text-gold text-sm tracking-[0.3em] uppercase"
+                  >
+                    <span className="relative">
+                      View Collection
+                      <span className="absolute bottom-0 left-0 w-0 group-hover:w-full h-[1px] bg-gold transition-all duration-500" />
+                    </span>
+                    <svg
+                      className="w-4 h-4 transition-transform duration-500 group-hover:translate-x-2"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </section>
+
+      {/* Marquee */}
+      <Marquee text="✦ THE SAIKO STUDIO ✦ BOLD FASHION ✦ LUXURY REDEFINED ✦ CRAFTED FOR THE FEARLESS ✦" />
+
+      {/* Stats Section */}
+      <section ref={statsReveal.ref} className="py-24 md:py-32 border-t border-b border-gold/10">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-12">
+            <AnimatedCounter target={500} suffix="+" />
+            <AnimatedCounter target={50} suffix="+" />
+            <AnimatedCounter target={15} suffix="K+" />
+            <AnimatedCounter target={100} suffix="%" />
+          </div>
+          <div className="flex justify-center gap-8 md:gap-16 mt-8 text-center">
+            {["Happy Clients", "Unique Pieces", "Social Following", "Satisfaction"].map((label) => (
+              <span key={label} className="text-gray-500 text-xs tracking-[0.2em] uppercase">
+                {label}
+              </span>
+            ))}
           </div>
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <CollectionBanner
-          image={img("corset.jpg.jpeg")}
-          title="Corsets"
-          products={corsetProducts}
-        />
+      {/* Newsletter CTA */}
+      <section ref={aboutReveal.ref} className={`py-24 md:py-32 transition-all duration-1000 ${aboutReveal.revealed ? "opacity-100 translate-y-0" : "opacity-0 translate-y-16"}`}>
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <p className="text-gold/60 text-xs tracking-[0.5em] uppercase mb-6">Join the Movement</p>
+          <h2 className="text-3xl md:text-5xl lg:text-6xl font-light tracking-widest uppercase mb-6">
+            Stay <span className="gold-text-gradient">Connected</span>
+          </h2>
+          <p className="text-gray-400 text-sm leading-relaxed mb-12 max-w-md mx-auto">
+            Be the first to know about new drops, exclusive offers, and behind-the-scenes content.
+          </p>
 
-        <CollectionBanner
-          image={img("co_ordsets.jpg.jpeg")}
-          title="Coord Sets"
-          products={coordProducts}
-        />
+          <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+            <input
+              type="email"
+              placeholder="Your email address"
+              className="flex-1 bg-transparent border border-gold/30 px-6 py-4 text-white text-sm tracking-wider placeholder:text-gray-600 focus:outline-none focus:border-gold transition-colors"
+            />
+            <button className="gold-gradient text-black font-semibold tracking-[0.2em] uppercase text-sm px-8 py-4 hover:opacity-90 transition-opacity whitespace-nowrap">
+              Subscribe
+            </button>
+          </div>
+        </div>
+      </section>
 
-        <CollectionBanner
-          image={img("dresses.jpg.jpeg")}
-          title="Dresses"
-          products={dressProducts}
-        />
-
-        <CollectionBanner
-          image={img("tops.jpg.jpeg")}
-          title="Tops"
-          products={topProducts}
-        />
-
-        <CollectionBanner
-          image={img("celebrity_1.jpg.jpeg")}
-          title="Celebrity Edit"
-          products={celebrityProducts}
-        />
-      </div>
+      {/* Final Marquee */}
+      <Marquee text="✦ SALES ✦ CORSETS ✦ COORD SETS ✦ DRESSES ✦ TOPS ✦ CELEBRITY EDIT ✦ BOLD ✦ BEAUTIFUL ✦" />
     </div>
   );
 }

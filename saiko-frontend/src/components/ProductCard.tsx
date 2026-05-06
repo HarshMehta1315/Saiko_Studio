@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 const dummy = (text: string, w: number = 600, h: number = 800) =>
   `https://placehold.co/${w}x${h}/0a0a0a/d4a853?text=${encodeURIComponent(text)}`;
@@ -17,7 +18,7 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
   return (
-    <a href={`/products/${product.slug}`} className="group block">
+    <Link href={`/products/${product.slug}`} className="group block">
       <div className="relative overflow-hidden bg-black-light aspect-[3/4] mb-4">
         <Image
           src={product.images[0] || dummy(product.title)}
@@ -52,6 +53,6 @@ export default function ProductCard({ product }: ProductCardProps) {
           <span className="text-gold text-sm font-semibold">₹ {product.price}</span>
         )}
       </div>
-    </a>
+    </Link>
   );
 }

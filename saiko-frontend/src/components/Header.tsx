@@ -12,14 +12,14 @@ const navLinks = [
 ];
 
 const shopLinks = [
-  { label: "The (IN) Complete Illusion", href: "/collections/the-incomplete-illusion" },
-  { label: "Corsets", href: "/collections/corsets" },
-  { label: "Coord Sets", href: "/collections/coord-sets" },
-  { label: "Dresses", href: "/collections/dresses" },
-  { label: "Tops", href: "/collections/tops" },
-  { label: "Bottoms", href: "/collections/bottoms" },
-  { label: "Accessories", href: "/collections/accessories" },
-  { label: "Celebrity edit", href: "/collections/celebrity-edit" },
+  { label: "The (IN) Complete Illusion", href: "/collections?cat=incomplete-illusion" },
+  { label: "Corsets", href: "/collections?cat=corsets" },
+  { label: "Coord Sets", href: "/collections?cat=coord-sets" },
+  { label: "Dresses", href: "/collections?cat=dresses" },
+  { label: "Tops", href: "/collections?cat=tops" },
+  { label: "Bottoms", href: "/collections?cat=bottoms" },
+  { label: "Accessories", href: "/collections?cat=accessories" },
+  { label: "Celebrity edit", href: "/collections?cat=celebrity-edit" },
 ];
 
 export default function Header() {
