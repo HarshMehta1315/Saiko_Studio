@@ -1,8 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useCart } from "@/context/CartContext";
+
+interface User {
+  id: string;
+  name: string;
+  email: string;
+}
 
 const navLinks = [
   { label: "HOME", href: "/" },
@@ -25,6 +32,25 @@ const shopLinks = [
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [shopDropdownOpen, setShopDropdownOpen] = useState(false);
+  const { totalItems } = useCart();
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const saved = localStorage.getItem('user');
+    if (saved) {
+      try {
+        setUser(JSON.parse(saved));
+      } catch {
+        setUser(null);
+      }
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setUser(null);
+  };
 
   return (
     <header className="bg-black border-b border-gold/20 sticky top-0 z-50">
@@ -88,7 +114,37 @@ export default function Header() {
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
               </svg>
+              {totalItems > 0 && (
+                <span className="absolute -top-2 -right-2 bg-gold text-black text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">
+                  {totalItems}
+                </span>
+              )}
             </Link>
+            {user ? (
+              <div className="relative group">
+                <button className="text-white hover:text-gold transition-colors text-sm tracking-widest uppercase">
+                  {user.name.split(' ')[0]}
+                </button>
+                <div className="absolute top-full right-0 mt-2 w-48 bg-black border border-gold/20 rounded-sm shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                  <Link
+                    href="/account"
+                    className="block px-4 py-3 text-white hover:text-gold hover:bg-black-lighter transition-colors text-sm"
+                  >
+                    My Account
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-left px-4 py-3 text-white hover:text-gold hover:bg-black-lighter transition-colors text-sm"
+                  >
+                    Logout
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <Link href="/login" className="text-white hover:text-gold transition-colors text-sm tracking-widest uppercase">
+                Login
+              </Link>
+            )}
           </div>
 
           <button
@@ -131,6 +187,27 @@ export default function Header() {
                   {link.label}
                 </Link>
               ))}
+            </div>
+            <div className="pt-4 border-t border-gold/20">
+              {user ? (
+                <>
+                  <p className="text-gold text-sm tracking-widest uppercase mb-3">{user.name}</p>
+                  <button
+                    onClick={() => { handleLogout(); setMobileMenuOpen(false); }}
+                    className="block text-white hover:text-gold transition-colors text-sm py-2"
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <Link
+                  href="/login"
+                  className="block text-white hover:text-gold transition-colors text-sm py-2 tracking-widest uppercase"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Login
+                </Link>
+              )}
             </div>
           </nav>
         </div>

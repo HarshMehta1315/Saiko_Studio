@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, use } from "react";
-import { notFound } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { allProducts, getProductBySlug } from "@/lib/products";
+import { useCart } from "@/context/CartContext";
 
 export default function ProductPage({
   params,
@@ -13,6 +14,8 @@ export default function ProductPage({
 }) {
   const resolvedParams = use(params);
   const product = getProductBySlug(resolvedParams.slug);
+  const { addToCart } = useCart();
+  const router = useRouter();
 
   if (!product) {
     notFound();
@@ -23,9 +26,24 @@ export default function ProductPage({
   const [quantity, setQuantity] = useState(1);
   const [shippingOpen, setShippingOpen] = useState(false);
   const [descOpen, setDescOpen] = useState(false);
+  const [addedToCart, setAddedToCart] = useState(false);
 
   const sizes = ["XS", "S", "M", "L", "XL"];
   const handleQty = (delta: number) => setQuantity((q) => Math.max(1, q + delta));
+
+  const handleAddToCart = () => {
+    addToCart({
+      title: product.title,
+      slug: product.slug,
+      price: parseInt(product.price.replace(/,/g, '')),
+      compareAtPrice: product.compareAtPrice ? parseInt(product.compareAtPrice.replace(/,/g, '')) : undefined,
+      image: product.images[0],
+      quantity,
+      size: selectedSize || undefined,
+    });
+    setAddedToCart(true);
+    setTimeout(() => setAddedToCart(false), 2000);
+  };
 
   const relatedProducts = allProducts
     .filter((p) => p.slug !== product.slug)
@@ -124,8 +142,15 @@ export default function ProductPage({
               </div>
             </div>
 
-            <button className="w-full bg-[#121212] text-white border border-white/30 font-semibold tracking-widest uppercase text-sm py-4 hover:bg-[#d4a853] hover:text-black hover:border-[#d4a853] transition-colors mb-3">
-              Add to Cart
+            <button
+              onClick={handleAddToCart}
+              className={`w-full font-semibold tracking-widest uppercase text-sm py-4 transition-all duration-300 mb-3 ${
+                addedToCart
+                  ? 'bg-green-600 text-white border-green-600'
+                  : 'bg-[#121212] text-white border border-white/30 hover:bg-[#d4a853] hover:text-black hover:border-[#d4a853]'
+              }`}
+            >
+              {addedToCart ? 'Added to Cart!' : 'Add to Cart'}
             </button>
 
             <div className="text-xs text-gray-400 mb-6">
